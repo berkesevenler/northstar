@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { google } from "googleapis";
 import {
   customerSchema,
   projectSchema,
@@ -13,7 +12,7 @@ import type {
   RevenueEntry,
   Target,
 } from "@/lib/types";
-import { appendItem, listAll } from "@/lib/sheets";
+import { appendItem, getSheets, listAll } from "@/lib/sheets";
 
 export const dynamic = "force-dynamic";
 
@@ -32,20 +31,6 @@ const iso = (offsetDays = 0) => {
 
 export async function POST() {
   try {
-    // First clear all data tabs (keep headers).
-    const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
-    const privateKey = (process.env.GOOGLE_PRIVATE_KEY ?? "").replace(
-      /\\n/g,
-      "\n",
-    );
-    const spreadsheetId = process.env.GOOGLE_SHEET_ID!;
-    const auth = new google.auth.JWT({
-      email,
-      key: privateKey,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
-    const sheets = google.sheets({ version: "v4", auth });
-
     // Make sure all tabs exist (listAll will auto-create them).
     await Promise.all([
       listAll(projectSchema),
@@ -53,6 +38,8 @@ export async function POST() {
       listAll(revenueSchema),
       listAll(targetSchema),
     ]);
+
+    const { sheets, spreadsheetId } = await getSheets();
 
     await sheets.spreadsheets.values.batchClear({
       spreadsheetId,

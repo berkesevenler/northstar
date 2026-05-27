@@ -7,24 +7,53 @@ let cachedClient: sheets_v4.Sheets | null = null;
 let cachedSpreadsheetId: string | null = null;
 let initializedTabs: Set<string> | null = null;
 
+/**
+ * Normalize a private key string that may have been pasted in different ways:
+ *   - wrapped in single or double quotes (common when copying from .env files
+ *     directly into a hosting provider's UI)
+ *   - with literal "\n" escape sequences instead of real newlines
+ *   - with Windows-style "\r\n" line endings
+ *   - with surrounding whitespace
+ */
+export function normalizePrivateKey(raw: string): string {
+  let key = raw.trim();
+  if (
+    (key.startsWith('"') && key.endsWith('"')) ||
+    (key.startsWith("'") && key.endsWith("'"))
+  ) {
+    key = key.slice(1, -1).trim();
+  }
+  key = key.replace(/\\n/g, "\n");
+  key = key.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  return key;
+}
+
 function getEnv() {
-  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL?.trim();
   const rawKey = process.env.GOOGLE_PRIVATE_KEY;
-  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID?.trim();
 
   if (!email || !rawKey || !spreadsheetId) {
     throw new Error(
-      "Missing Google credentials. Set GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY and GOOGLE_SHEET_ID in .env.local.",
+      "Missing Google credentials. Set GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY and GOOGLE_SHEET_ID.",
     );
   }
 
-  // Handle both real newlines and the literal "\n" escape commonly seen in env files.
-  const privateKey = rawKey.replace(/\\n/g, "\n");
+  const privateKey = normalizePrivateKey(rawKey);
+
+  if (
+    !privateKey.includes("-----BEGIN") ||
+    !privateKey.includes("-----END")
+  ) {
+    throw new Error(
+      "GOOGLE_PRIVATE_KEY appears malformed. Make sure the value includes -----BEGIN PRIVATE KEY----- and -----END PRIVATE KEY-----, has no surrounding quotes, and uses either real newlines or \\n escape sequences between lines.",
+    );
+  }
 
   return { email, privateKey, spreadsheetId };
 }
 
-async function getSheets(): Promise<{
+export async function getSheets(): Promise<{
   sheets: sheets_v4.Sheets;
   spreadsheetId: string;
 }> {
