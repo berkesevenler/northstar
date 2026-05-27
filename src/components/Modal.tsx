@@ -39,8 +39,8 @@ export default function Modal({
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative z-10 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
           <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
           <button
             onClick={onClose}
@@ -50,9 +50,13 @@ export default function Modal({
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="space-y-3">{children}</div>
+        <div className="flex-1 space-y-3 overflow-y-auto px-6 py-5">
+          {children}
+        </div>
         {footer && (
-          <div className="mt-6 flex justify-end gap-2">{footer}</div>
+          <div className="flex flex-shrink-0 flex-wrap items-center justify-end gap-2 border-t border-slate-100 bg-slate-50 px-6 py-4">
+            {footer}
+          </div>
         )}
       </div>
     </div>

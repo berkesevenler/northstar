@@ -154,15 +154,6 @@ function Revenue() {
         }
       />
 
-      <div className="mb-6 rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-800">
-        <span className="font-semibold">How this works:</span> Revenue entries
-        are your actual cash ledger — log a payment each time money arrives.{" "}
-        <span className="font-semibold">MRR &amp; ARR on the dashboard</span>{" "}
-        are calculated automatically from your active customers' monthly values —
-        you don't need to log anything for that. The "Type" field is just a
-        label so you can see where revenue comes from.
-      </div>
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <KpiCard label="This month" value={currency(thisMonth)} accent="indigo" />
         <KpiCard label="This year" value={currency(thisYear)} accent="emerald" />
