@@ -146,13 +146,22 @@ function Revenue() {
     <>
       <PageHeader
         title="Revenue"
-        subtitle="All cash coming in — subscriptions, one-time deals, services."
+        subtitle="Your actual cash ledger — log every payment when it arrives."
         actions={
           <button onClick={openNew} className="btn-primary">
             <Plus className="h-4 w-4" /> Log revenue
           </button>
         }
       />
+
+      <div className="mb-6 rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-800">
+        <span className="font-semibold">How this works:</span> Revenue entries
+        are your actual cash ledger — log a payment each time money arrives.{" "}
+        <span className="font-semibold">MRR &amp; ARR on the dashboard</span>{" "}
+        are calculated automatically from your active customers' monthly values —
+        you don't need to log anything for that. The "Type" field is just a
+        label so you can see where revenue comes from.
+      </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <KpiCard label="This month" value={currency(thisMonth)} accent="indigo" />
@@ -367,11 +376,15 @@ function Revenue() {
                 setForm({ ...form, type: e.target.value as RevenueType })
               }
             >
-              <option value="subscription">Subscription</option>
-              <option value="one-time">One-time</option>
+              <option value="subscription">Subscription (recurring monthly payment)</option>
+              <option value="one-time">One-time (single payment)</option>
               <option value="service">Service / Consulting</option>
               <option value="other">Other</option>
             </select>
+            <p className="mt-1 text-xs text-slate-500">
+              This is a label only — log one entry per payment received. MRR/ARR
+              are calculated from your active customers, not from these entries.
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>

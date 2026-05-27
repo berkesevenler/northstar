@@ -7,6 +7,7 @@ import {
   TrendingUp,
   Sparkles,
   RefreshCw,
+  FileText,
 } from "lucide-react";
 import KpiCard from "@/components/KpiCard";
 import PageHeader from "@/components/PageHeader";
@@ -90,6 +91,15 @@ function Dashboard() {
               />
               Refresh
             </button>
+            <a
+              href="/export"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-secondary"
+            >
+              <FileText className="h-4 w-4" />
+              Export report
+            </a>
             {isEmpty && (
               <button
                 onClick={seedDemo}
