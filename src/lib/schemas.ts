@@ -1,5 +1,6 @@
 import "server-only";
 import type {
+  CalendarEvent,
   Customer,
   Project,
   ProjectStatus,
@@ -168,5 +169,42 @@ export const targetSchema: TableSchema<Target> = {
     dueDate: r[5],
     notes: optStr(r[6]),
     createdAt: r[7] || new Date().toISOString(),
+  }),
+};
+
+export const eventSchema: TableSchema<CalendarEvent> = {
+  name: "events",
+  columns: [
+    "id",
+    "title",
+    "date",
+    "startTime",
+    "endTime",
+    "description",
+    "location",
+    "attendees",
+    "createdAt",
+  ],
+  toRow: (e) => [
+    e.id,
+    e.title,
+    e.date,
+    e.startTime ?? "",
+    e.endTime ?? "",
+    e.description ?? "",
+    e.location ?? "",
+    e.attendees ?? "",
+    e.createdAt,
+  ],
+  fromRow: (r) => ({
+    id: r[0],
+    title: r[1],
+    date: r[2],
+    startTime: optStr(r[3]),
+    endTime: optStr(r[4]),
+    description: optStr(r[5]),
+    location: optStr(r[6]),
+    attendees: optStr(r[7]),
+    createdAt: r[8] || new Date().toISOString(),
   }),
 };

@@ -55,3 +55,15 @@ export interface Target {
   notes?: string;
   createdAt: string;
 }
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  date: string;        // "YYYY-MM-DD"
+  startTime?: string;  // "HH:MM"
+  endTime?: string;    // "HH:MM"
+  description?: string;
+  location?: string;
+  attendees?: string;  // comma-separated names/emails
+  createdAt: string;
+}

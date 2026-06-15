@@ -9,6 +9,7 @@ import {
   Users,
   DollarSign,
   Target as TargetIcon,
+  Calendar,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -18,6 +19,7 @@ const nav = [
   { href: "/customers", label: "Customers", icon: Users },
   { href: "/revenue", label: "Revenue", icon: DollarSign },
   { href: "/targets", label: "Targets", icon: TargetIcon },
+  { href: "/calendar", label: "Calendar", icon: Calendar },
 ];
 
 export default function Sidebar() {

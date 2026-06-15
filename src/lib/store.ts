@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import type {
+  CalendarEvent,
   Customer,
   Project,
   RevenueEntry,
@@ -13,6 +14,7 @@ interface TrackerState {
   customers: Customer[];
   revenue: RevenueEntry[];
   targets: Target[];
+  events: CalendarEvent[];
 
   loading: boolean;
   saving: boolean;
@@ -37,13 +39,17 @@ interface TrackerState {
   updateTarget: (id: string, t: Partial<Target>) => Promise<void>;
   deleteTarget: (id: string) => Promise<void>;
 
+  addEvent: (e: Omit<CalendarEvent, "id" | "createdAt">) => Promise<void>;
+  updateEvent: (id: string, e: Partial<CalendarEvent>) => Promise<void>;
+  deleteEvent: (id: string) => Promise<void>;
+
   resetAll: () => Promise<void>;
   seedDemo: () => Promise<void>;
   clearError: () => void;
 }
 
-type EntityKey = "projects" | "customers" | "revenue" | "targets";
-type EntityType = Project | Customer | RevenueEntry | Target;
+type EntityKey = "projects" | "customers" | "revenue" | "targets" | "events";
+type EntityType = Project | Customer | RevenueEntry | Target | CalendarEvent;
 
 async function api<T>(
   url: string,
@@ -141,6 +147,7 @@ export const useTracker = create<TrackerState>((set, get) => {
     customers: [],
     revenue: [],
     targets: [],
+    events: [],
 
     loading: false,
     saving: false,
@@ -156,12 +163,14 @@ export const useTracker = create<TrackerState>((set, get) => {
           customers: Customer[];
           revenue: RevenueEntry[];
           targets: Target[];
+          events: CalendarEvent[];
         }>("/api/data");
         set({
           projects: data.projects,
           customers: data.customers,
           revenue: data.revenue,
           targets: data.targets,
+          events: data.events ?? [],
           loading: false,
           loaded: true,
         });
@@ -199,6 +208,10 @@ export const useTracker = create<TrackerState>((set, get) => {
     addTarget: makeAdd<"targets", Target>("targets", "/api/targets"),
     updateTarget: makeUpdate<"targets", Target>("targets", "/api/targets"),
     deleteTarget: makeDelete<"targets", Target>("targets", "/api/targets"),
+
+    addEvent: makeAdd<"events", CalendarEvent>("events", "/api/calendar"),
+    updateEvent: makeUpdate<"events", CalendarEvent>("events", "/api/calendar"),
+    deleteEvent: makeDelete<"events", CalendarEvent>("events", "/api/calendar"),
 
     resetAll: async () => {
       await withSaving(async () => {
